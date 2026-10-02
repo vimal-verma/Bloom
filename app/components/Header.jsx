@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Calendar, Bell, Droplets, Pill, BookOpen, HeartPulse, Settings } from "lucide-react";
+import { Sparkles, Calendar, Bell, Droplets, Pill, BookOpen, HeartPulse, Settings, Bot } from "lucide-react";
 
 export default function Header({ 
   stats, 
@@ -70,6 +70,7 @@ export default function Header({
           {[
             { id: "journey", label: "My Journey", icon: Sparkles },
             { id: "reminders", label: "Water & Medicine", icon: Droplets, badge: "Daily" },
+            { id: "chat", label: "Ask Gemma AI", icon: Bot, badge: "Local AI" },
             { id: "weekguide", label: "Week by Week", icon: BookOpen },
             { id: "caretools", label: "Care Tools", icon: HeartPulse },
           ].map((tab) => {

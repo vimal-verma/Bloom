@@ -15,7 +15,8 @@ import {
   ArrowRight,
   ShieldCheck,
   Smile,
-  Activity
+  Activity,
+  Bot
 } from "lucide-react";
 import { playWaterPop, playChime } from "../lib/soundUtils";
 
@@ -306,6 +307,36 @@ export default function JourneyTab({
             </button>
           </div>
         </div>
+      </div>
+
+      {/* AI Assistant Banner */}
+      <div className="glass-card-elevated rounded-3xl p-5 sm:p-6 border border-rose-100/90 bg-gradient-to-r from-rose-50/90 via-pink-50/60 to-amber-50/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 via-pink-400 to-amber-300 text-white flex items-center justify-center shadow-md shadow-rose-200 shrink-0">
+            <Bot className="w-6 h-6 animate-pulse" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-bold text-slate-800 text-base">
+                Ask Pregnancy Gemma AI
+              </h4>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                Local & Private
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Have questions about your current symptoms, week {currentWeek} milestones, or nutrition? Chat with your local Gemma model anytime.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => onNavigateToTab("chat")}
+          className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-rose-200 transition-all flex items-center gap-2 hover:scale-[1.02] shrink-0"
+        >
+          <span>Chat with Gemma</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Week Details: Baby Development & Mom's Changes */}

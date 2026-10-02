@@ -6,6 +6,7 @@ import JourneyTab from "./components/JourneyTab";
 import RemindersTab from "./components/RemindersTab";
 import WeekGuideTab from "./components/WeekGuideTab";
 import CareToolsTab from "./components/CareToolsTab";
+import GemmaChatTab from "./components/GemmaChatTab";
 import OnboardingModal from "./components/OnboardingModal";
 import SettingsModal from "./components/SettingsModal";
 import ToastAlert from "./components/ToastAlert";
@@ -403,6 +404,10 @@ export default function Home() {
             notificationStatus={notificationStatus}
             onRequestNotification={handleRequestNotification}
           />
+        )}
+
+        {activeTab === "chat" && (
+          <GemmaChatTab stats={effectiveStats} />
         )}
 
         {activeTab === "weekguide" && (
