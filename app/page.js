@@ -9,6 +9,7 @@ import CareToolsTab from "./components/CareToolsTab";
 import GemmaChatTab from "./components/GemmaChatTab";
 import OnboardingModal from "./components/OnboardingModal";
 import SettingsModal from "./components/SettingsModal";
+import AppGuideModal from "./components/AppGuideModal";
 import ToastAlert from "./components/ToastAlert";
 import { 
   DEFAULT_MEDICATIONS, 
@@ -24,12 +25,13 @@ import {
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState("journey"); // "journey", "reminders", "weekguide", "caretools"
+  const [activeTab, setActiveTab] = useState("journey"); // "journey", "reminders", "chat", "weekguide", "caretools"
 
   // User pregnancy state
   const [userData, setUserData] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   // Water tracker state
   const [waterData, setWaterData] = useState({
@@ -370,6 +372,7 @@ export default function Home() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenSettings={() => setShowSettings(true)}
+        onOpenGuide={() => setShowGuide(true)}
         notificationStatus={notificationStatus}
         onRequestNotification={handleRequestNotification}
       />
@@ -407,7 +410,10 @@ export default function Home() {
         )}
 
         {activeTab === "chat" && (
-          <GemmaChatTab stats={effectiveStats} />
+          <GemmaChatTab
+            stats={effectiveStats}
+            onOpenGuide={() => setShowGuide(true)}
+          />
         )}
 
         {activeTab === "weekguide" && (
@@ -434,6 +440,16 @@ export default function Home() {
         waterData={waterData}
         onUpdateWaterConfig={handleUpdateWaterConfig}
         onResetAllData={handleResetAllData}
+      />
+
+      {/* User Guide & Tutorial Modal */}
+      <AppGuideModal
+        isOpen={showGuide}
+        onClose={() => setShowGuide(false)}
+        onOpenAiSettings={() => {
+          setShowGuide(false);
+          setActiveTab("chat");
+        }}
       />
 
       {/* Floating Toast Notification */}

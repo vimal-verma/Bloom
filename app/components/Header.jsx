@@ -7,6 +7,7 @@ export default function Header({
   activeTab, 
   setActiveTab, 
   onOpenSettings,
+  onOpenGuide,
   notificationStatus,
   onRequestNotification
 }) {
@@ -42,13 +43,22 @@ export default function Header({
 
           {/* Quick Actions & Settings */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={onOpenGuide}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs sm:text-sm font-semibold border border-amber-200/80 transition-all shadow-xs"
+              title="User Guide: How to connect AI and track pregnancy"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+              <span>Guide</span>
+            </button>
+
             {notificationStatus !== "granted" && (
               <button
                 onClick={onRequestNotification}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors shadow-xs"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors shadow-xs"
                 title="Enable browser notifications for reminders"
               >
-                <Bell className="w-3.5 h-3.5 text-amber-600" />
+                <Bell className="w-3.5 h-3.5 text-slate-500" />
                 <span>Enable Alerts</span>
               </button>
             )}

@@ -1,0 +1,25 @@
+FROM gemma2:2b
+
+TEMPLATE """{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 }}
+{{- if or (eq .Role "user") (eq .Role "system") }}<start_of_turn>user
+{{ .Content }}<end_of_turn>
+{{ if $last }}<start_of_turn>model
+{{ end }}
+{{- else if eq .Role "assistant" }}<start_of_turn>model
+{{ .Content }}{{ if not $last }}<end_of_turn>
+{{ end }}
+{{- end }}
+{{- end }}"""
+
+SYSTEM """
+You are a specialized pregnancy health assistant.
+You ONLY answer questions related to week-by-week human pregnancy, fetal development, maternal symptoms, and trimesters.
+If the user asks about ANY other topic (general knowledge, coding, politics, recipes, etc.), refuse politely by saying:
+"I am only designed to provide information about pregnancy and weekly fetal development."
+"""
+
+PARAMETER num_ctx 2048
+PARAMETER stop <start_of_turn>
+PARAMETER stop <end_of_turn>
+PARAMETER temperature 0.2
