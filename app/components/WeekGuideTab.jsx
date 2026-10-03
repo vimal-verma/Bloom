@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { 
   WEEKS_DATA 
 } from "../lib/pregnancyData";
@@ -18,14 +18,42 @@ import {
 } from "lucide-react";
 
 export default function WeekGuideTab({ currentWeek = 1 }) {
+  const userTrimester = currentWeek <= 13 ? 1 : currentWeek <= 27 ? 2 : 3;
   const [selectedWeekNum, setSelectedWeekNum] = useState(currentWeek);
-  const [activeTrimesterFilter, setActiveTrimesterFilter] = useState(0); // 0 = all
+  // Default to user's current trimester so their active week is right on screen with no horizontal scrolling needed!
+  const [activeTrimesterFilter, setActiveTrimesterFilter] = useState(userTrimester);
+
+  const scrollerRef = useRef(null);
+  const activePillRef = useRef(null);
 
   const selectedWeek = WEEKS_DATA.find((w) => w.week === selectedWeekNum) || WEEKS_DATA[0];
 
   const filteredWeeks = activeTrimesterFilter === 0 
     ? WEEKS_DATA 
     : WEEKS_DATA.filter((w) => w.trimester === activeTrimesterFilter);
+
+  // Keep the active week centered within the horizontal scroller (never scrolls the page window!)
+  useEffect(() => {
+    if (activePillRef.current && scrollerRef.current) {
+      const container = scrollerRef.current;
+      const pill = activePillRef.current;
+      const targetLeft = pill.offsetLeft - (container.offsetWidth / 2) + (pill.offsetWidth / 2);
+      container.scrollTo({ left: Math.max(0, targetLeft), behavior: "smooth" });
+    }
+  }, [selectedWeekNum, activeTrimesterFilter]);
+
+  const handleSelectWeek = (weekNum) => {
+    setSelectedWeekNum(weekNum);
+    const targetTri = weekNum <= 13 ? 1 : weekNum <= 27 ? 2 : 3;
+    if (activeTrimesterFilter !== 0 && activeTrimesterFilter !== targetTri) {
+      setActiveTrimesterFilter(targetTri);
+    }
+  };
+
+  const handleJumpToCurrentWeek = () => {
+    setActiveTrimesterFilter(userTrimester);
+    setSelectedWeekNum(currentWeek);
+  };
 
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
@@ -48,8 +76,8 @@ export default function WeekGuideTab({ currentWeek = 1 }) {
 
           {/* Jump to current week button */}
           <button
-            onClick={() => setSelectedWeekNum(currentWeek)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold border border-rose-200/80 transition-all self-start sm:self-auto"
+            onClick={handleJumpToCurrentWeek}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold border border-rose-200/80 transition-all self-start sm:self-auto active:scale-95"
           >
             <Bookmark className="w-3.5 h-3.5" />
             <span>Jump to My Current Week ({currentWeek})</span>
@@ -60,16 +88,16 @@ export default function WeekGuideTab({ currentWeek = 1 }) {
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-rose-100/70">
           {[
             { id: 0, label: "All Weeks (1 - 40)" },
-            { id: 1, label: "Trimester 1 (W1 - W13)" },
-            { id: 2, label: "Trimester 2 (W14 - W27)" },
-            { id: 3, label: "Trimester 3 (W28 - W40)" }
+            { id: 1, label: `Trimester 1 (W1 - W13)${userTrimester === 1 ? " • Current" : ""}` },
+            { id: 2, label: `Trimester 2 (W14 - W27)${userTrimester === 2 ? " • Current" : ""}` },
+            { id: 3, label: `Trimester 3 (W28 - W40)${userTrimester === 3 ? " • Current" : ""}` }
           ].map((t) => (
             <button
               key={t.id}
               onClick={() => setActiveTrimesterFilter(t.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTrimesterFilter === t.id
-                  ? "bg-rose-500 text-white shadow-xs"
+                  ? "bg-rose-500 text-white shadow-xs font-bold"
                   : "bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600"
               }`}
             >
@@ -78,8 +106,11 @@ export default function WeekGuideTab({ currentWeek = 1 }) {
           ))}
         </div>
 
-        {/* Horizontal Week Pill Scroller */}
-        <div className="flex items-center gap-2 overflow-x-auto py-2 pb-3.5 no-scrollbar scroll-smooth overscroll-x-contain -mx-2 px-2 sm:mx-0 sm:px-0">
+        {/* Horizontal Week Pill Scroller with auto-centered active week */}
+        <div 
+          ref={scrollerRef}
+          className="flex items-center gap-2 overflow-x-auto py-2 pb-3.5 no-scrollbar scroll-smooth overscroll-x-contain -mx-2 px-2 sm:mx-0 sm:px-0"
+        >
           {filteredWeeks.map((w) => {
             const isSelected = w.week === selectedWeekNum;
             const isUserCurrent = w.week === currentWeek;
@@ -87,7 +118,8 @@ export default function WeekGuideTab({ currentWeek = 1 }) {
             return (
               <button
                 key={w.week}
-                onClick={() => setSelectedWeekNum(w.week)}
+                ref={isSelected ? activePillRef : null}
+                onClick={() => handleSelectWeek(w.week)}
                 className={`flex flex-col items-center justify-center min-w-[60px] sm:min-w-[64px] h-[68px] sm:h-[72px] rounded-2xl border transition-all shrink-0 relative active:scale-95 ${
                   isSelected
                     ? "bg-gradient-to-b from-rose-500 to-pink-500 border-rose-500 text-white shadow-md shadow-rose-200 scale-105"
@@ -110,7 +142,7 @@ export default function WeekGuideTab({ currentWeek = 1 }) {
         {/* Navigation Arrows & Title */}
         <div className="flex items-center justify-between pb-4 border-b border-rose-100/70">
           <button
-            onClick={() => setSelectedWeekNum((prev) => Math.max(1, prev - 1))}
+            onClick={() => handleSelectWeek(Math.max(1, selectedWeekNum - 1))}
             disabled={selectedWeekNum <= 1}
             className="p-2.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-rose-100 disabled:opacity-30 text-slate-700 transition-colors active:scale-95"
             title="Previous Week"
@@ -128,7 +160,7 @@ export default function WeekGuideTab({ currentWeek = 1 }) {
           </div>
 
           <button
-            onClick={() => setSelectedWeekNum((prev) => Math.min(40, prev + 1))}
+            onClick={() => handleSelectWeek(Math.min(40, selectedWeekNum + 1))}
             disabled={selectedWeekNum >= 40}
             className="p-2.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-rose-100 disabled:opacity-30 text-slate-700 transition-colors active:scale-95"
             title="Next Week"

@@ -365,13 +365,20 @@ export default function Home() {
       })()
     );
 
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col selection:bg-rose-200 selection:text-rose-800">
       {/* Top Header */}
       <Header
         stats={effectiveStats}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         onOpenSettings={() => setShowSettings(true)}
         onOpenGuide={() => setShowGuide(true)}
         notificationStatus={notificationStatus}
@@ -387,7 +394,7 @@ export default function Home() {
             onAddWater={handleAddWater}
             medications={medications}
             onToggleMedication={handleToggleMedTaken}
-            onNavigateToTab={(tab) => setActiveTab(tab)}
+            onNavigateToTab={handleTabChange}
             onOpenSettings={() => setShowSettings(true)}
           />
         )}
@@ -425,7 +432,7 @@ export default function Home() {
       </main>
 
       {/* App-Grade Mobile Bottom Navigation Bar (Hidden on Desktop) */}
-      <MobileBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <MobileBottomNav activeTab={activeTab} setActiveTab={handleTabChange} />
 
       {/* Onboarding Modal */}
       <OnboardingModal

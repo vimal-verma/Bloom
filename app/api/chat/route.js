@@ -14,12 +14,12 @@ export async function POST(req) {
       );
     }
 
-    // Build personalized system context based on mom's current stage
     let systemPreamble = "You are Pregnancy Gemma, a specialized, compassionate, evidence-based obstetric companion.";
     if (userContext) {
       systemPreamble += ` The expectant mother is currently at Week ${userContext.currentWeek}, Day ${userContext.currentDayOfWeek} (Trimester ${userContext.trimester}). Her baby is currently about the size of a ${userContext.weekInfo?.fruit || "little seed"}.`;
     }
     systemPreamble += " Provide warm, supportive, clear, and reassuring answers about fetal development, pregnancy symptoms, maternal nutrition, hydration, and wellness. CRITICAL SAFETY: Always advise contacting a doctor or triage immediately for severe bleeding, intense abdominal pain, sudden vision changes/swelling, or reduced fetal movement.";
+    systemPreamble += " FORMATTING GUIDELINES: Format your responses with clean, beautifully organized Markdown using bold text for key terms, clear bullet points, and headers (###). Speak directly to the mother with empathy and reassuring medical accuracy. NEVER output internal checklists, evaluation criteria, prompt reviews, or thinking steps.";
 
     const provider = aiConfig?.provider || "ollama";
 
@@ -41,27 +41,97 @@ export async function POST(req) {
         parts: [{ text: m.content }]
       }));
 
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
+      // Candidate models in priority order (Google has migrated from 1.5 to 2.0 flash)
+      const userSelectedModel = aiConfig?.geminiModel?.trim();
+      const defaultCandidates = [
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-flash",
+        "gemini-pro"
+      ];
+      const candidateModels = userSelectedModel
+        ? [userSelectedModel, ...defaultCandidates.filter((m) => m !== userSelectedModel)]
+        : defaultCandidates;
 
-      const geminiRes = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: systemPreamble }]
-          },
-          contents: contents,
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 800
+      let geminiRes = null;
+      let lastErrorText = "";
+
+      for (const model of candidateModels) {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+        const res = await fetch(geminiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: systemPreamble }]
+            },
+            contents: contents,
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 800
+            }
+          })
+        });
+
+        if (res.ok) {
+          geminiRes = res;
+          break;
+        } else if (res.status === 404) {
+          // Model not found in this API version / account, try next candidate
+          lastErrorText = await res.text();
+          continue;
+        } else {
+          // Non-404 error (e.g. 400 bad request, 401 invalid key, 429 quota)
+          const errorText = await res.text();
+          return NextResponse.json(
+            { error: `Gemini API error (${res.status}): ${errorText}` },
+            { status: res.status === 401 || res.status === 403 ? 401 : 502 }
+          );
+        }
+      }
+
+      // If all pre-set candidates failed with 404, query ModelService.ListModels to auto-discover
+      if (!geminiRes) {
+        try {
+          const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+          if (listRes.ok) {
+            const listData = await listRes.json();
+            const availableModels = (listData.models || [])
+              .filter((m) => m.supportedGenerationMethods?.includes("generateContent"))
+              .map((m) => m.name.replace(/^models\//, ""));
+
+            for (const model of availableModels) {
+              const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+              const res = await fetch(geminiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  systemInstruction: {
+                    parts: [{ text: systemPreamble }]
+                  },
+                  contents: contents,
+                  generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 800
+                  }
+                })
+              });
+              if (res.ok) {
+                geminiRes = res;
+                break;
+              }
+            }
           }
-        })
-      });
+        } catch (listErr) {
+          console.error("Error auto-discovering Gemini models:", listErr);
+        }
+      }
 
-      if (!geminiRes.ok) {
-        const errorText = await geminiRes.text();
+      if (!geminiRes) {
         return NextResponse.json(
-          { error: `Gemini API error (${geminiRes.status}): ${errorText}` },
+          { error: `Gemini API error: No supported model found for your key. Details: ${lastErrorText}` },
           { status: 502 }
         );
       }

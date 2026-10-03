@@ -24,6 +24,7 @@ import {
   Zap
 } from "lucide-react";
 import { playChime } from "../lib/soundUtils";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 export default function GemmaChatTab({ stats, onOpenGuide }) {
   // 1. AI Configuration State (Persisted in localStorage)
@@ -55,8 +56,22 @@ How are you feeling today? You can ask me anything about your current week's sym
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
-  const messagesEndRef = useRef(null);
+  const chatScrollContainerRef = useRef(null);
+  const prevMessagesLengthRef = useRef(messages.length);
   const abortControllerRef = useRef(null);
+
+  // Safely scroll ONLY the inner message box on new messages or streaming (never scrolls window)
+  useEffect(() => {
+    if (chatScrollContainerRef.current) {
+      if (messages.length > prevMessagesLengthRef.current || isLoading) {
+        chatScrollContainerRef.current.scrollTo({
+          top: chatScrollContainerRef.current.scrollHeight,
+          behavior: "smooth"
+        });
+      }
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages, isLoading]);
 
   // Load saved AI config from localStorage
   useEffect(() => {
@@ -113,13 +128,23 @@ How are you feeling today? You can ask me anything about your current week's sym
     }
   };
 
-  // Auto-scroll to bottom
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // Scroll ONLY the inner chat bubbles container, NEVER the browser window!
+  const scrollToBottom = (behavior = "smooth") => {
+    if (chatScrollContainerRef.current) {
+      chatScrollContainerRef.current.scrollTo({
+        top: chatScrollContainerRef.current.scrollHeight,
+        behavior: behavior
+      });
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Only scroll inner container when new messages are added or while streaming
+    // Never auto-scroll on initial tab mount!
+    if (messages.length > prevMessagesLengthRef.current || isLoading) {
+      scrollToBottom();
+    }
+    prevMessagesLengthRef.current = messages.length;
   }, [messages, isLoading]);
 
   const handleSend = async (customPrompt) => {
@@ -344,7 +369,7 @@ How are you feeling today? You can ask me anything about your current week's sym
       {/* Chat Messages Container */}
       <div className="glass-card-elevated rounded-3xl p-3.5 sm:p-6 border border-rose-100 h-[65dvh] sm:h-[600px] min-h-[420px] flex flex-col justify-between overflow-hidden shadow-sm">
         {/* Scrollable message stream */}
-        <div className="flex-1 overflow-y-auto space-y-3.5 sm:space-y-4 pr-1 mb-3">
+        <div ref={chatScrollContainerRef} className="flex-1 overflow-y-auto space-y-3.5 sm:space-y-4 pr-1 mb-3">
           {/* Quick Setup Card if Not Connected */}
           {connectionStatus !== "online" && (
             <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 text-slate-800 space-y-2 mb-2 shadow-xs animate-fadeIn">
@@ -425,14 +450,16 @@ How are you feeling today? You can ask me anything about your current week's sym
                       : "bg-white/95 border border-rose-100/90 text-slate-800 shadow-xs"
                   }`}
                 >
-                  <div className="whitespace-pre-wrap font-normal">
-                    {msg.content || (
-                      <span className="flex items-center gap-1.5 text-slate-400 font-medium">
-                        <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
-                        Pregnancy Gemma is thinking...
-                      </span>
-                    )}
-                  </div>
+                  {isUser ? (
+                    <div className="whitespace-pre-wrap font-medium">{msg.content}</div>
+                  ) : msg.content ? (
+                    <MarkdownRenderer content={msg.content} />
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-slate-400 font-medium">
+                      <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
+                      Pregnancy Gemma is thinking...
+                    </span>
+                  )}
 
                   {!isUser && msg.content && (
                     <button
@@ -451,7 +478,6 @@ How are you feeling today? You can ask me anything about your current week's sym
               </div>
             );
           })}
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Suggested Quick Prompts */}
@@ -720,7 +746,7 @@ How are you feeling today? You can ask me anything about your current week's sym
                     className="w-full px-3.5 py-2.5 rounded-xl border border-rose-200 bg-white text-xs sm:text-sm text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-rose-400"
                   />
                   <p className="text-[11px] text-slate-500 mt-1">
-                    Ideal when deploying on <strong>Render</strong> or cloud hosts where Ollama isn't installed. Uses Gemini 1.5 Flash with the exact same obstetric guidelines!
+                    Ideal when deploying on <strong>Render</strong> or cloud hosts where Ollama isn't installed. Uses Gemini 2.0 Flash with automatic fallback and the exact same obstetric guidelines!
                   </p>
                 </div>
               </div>
