@@ -1,8 +1,12 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Bloom & Nurture — Pregnancy & Daily Wellness Tracker",
-  description: "Track your week-by-week pregnancy journey, baby growth milestones, customizable daily water reminders, and prenatal medicine schedules.",
+  title: "Bloom & Nurture — Pregnancy & Daily Wellness Companion",
+  description: "A private, compassionate pregnancy companion powered by Gemma 2. Track week-by-week milestones, hydration, prenatal medications, and care tools.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
