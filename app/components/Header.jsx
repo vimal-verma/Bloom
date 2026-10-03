@@ -75,8 +75,8 @@ export default function Header({
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <nav className="flex items-center justify-between sm:justify-start gap-1 sm:gap-2 mt-3 pt-2.5 border-t border-rose-100/50 overflow-x-auto no-scrollbar">
+        {/* Desktop Tab Navigation (Mobile uses MobileBottomNav) */}
+        <nav className="hidden md:flex items-center gap-2 mt-3 pt-2.5 border-t border-rose-100/50 overflow-x-auto no-scrollbar">
           {[
             { id: "journey", label: "My Journey", icon: Sparkles },
             { id: "reminders", label: "Water & Medicine", icon: Droplets, badge: "Daily" },

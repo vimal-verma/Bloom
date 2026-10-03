@@ -21,7 +21,8 @@ import {
   Smartphone,
   Laptop,
   Zap,
-  Lock
+  Lock,
+  AlertCircle
 } from "lucide-react";
 
 export default function AppGuideModal({ isOpen, onClose, onOpenAiSettings }) {
@@ -259,20 +260,69 @@ export default function AppGuideModal({ isOpen, onClose, onOpenAiSettings }) {
                         <span className="font-semibold text-slate-700 block mb-1">
                           Step 2: Expose your local port via a free tunnel
                         </span>
-                        <p className="text-[11px] text-slate-500 mb-1">Run this command in any PowerShell or Terminal window:</p>
-                        <div className="flex items-center justify-between bg-slate-900 text-rose-200 px-3 py-2 rounded-xl font-mono text-xs">
-                          <span>npx localtunnel --port 11434</span>
-                          <button
-                            onClick={() => handleCopy("cmd2", "npx localtunnel --port 11434")}
-                            className="p-1 hover:text-white transition-colors"
-                            title="Copy command"
-                          >
-                            {copiedText === "cmd2" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                          </button>
+                        
+                        {/* 403 Forbidden & OLLAMA_ORIGINS Info Box */}
+                        <div className="p-3 rounded-xl bg-amber-50/90 border border-amber-200/90 text-amber-900 space-y-1.5 mb-2.5">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+                            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                            <span>Crucial Requirement to Avoid 403 Forbidden Error:</span>
+                          </div>
+                          <p className="text-[11px] text-amber-800 leading-relaxed">
+                            The <strong>403 Forbidden</strong> error is caused by Ollama's internal CORS/Host security filter. By default, Ollama refuses to respond to any external domain name (like <code>wet-spoons-trade.loca.lt</code>) unless the environment variable <code>OLLAMA_ORIGINS="*"</code> is set on your computer.
+                          </p>
+                          <div className="pt-1 space-y-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">
+                              Run once in PowerShell (Windows) to enable:
+                            </span>
+                            <div className="flex items-center justify-between bg-slate-900 text-amber-200 px-3 py-1.5 rounded-lg font-mono text-xs">
+                              <span>[System.Environment]::SetEnvironmentVariable('OLLAMA_ORIGINS', '*', 'User')</span>
+                              <button
+                                onClick={() => handleCopy("cmd_origins", "[System.Environment]::SetEnvironmentVariable('OLLAMA_ORIGINS', '*', 'User')")}
+                                className="p-1 hover:text-white transition-colors"
+                                title="Copy command"
+                              >
+                                {copiedText === "cmd_origins" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                            <span className="text-[10px] text-amber-700 block font-medium">
+                              *After running this, restart Ollama so it loads the new setting.
+                            </span>
+                          </div>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">
-                          The terminal will give you an HTTPS link like: <code>https://happy-frog-12.loca.lt</code>
-                        </p>
+
+                        <p className="text-[11px] text-slate-500 mb-1.5 font-medium">Choose whichever tunnel method you prefer:</p>
+                        
+                        <div className="space-y-2.5">
+                          {/* Option 1: Ngrok with host-header (VERIFIED & RECOMMENDED) */}
+                          <div className="p-3.5 rounded-xl bg-rose-50/70 border border-rose-200/90 space-y-2 shadow-xs">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                                🌟 Option 1: Ngrok (Recommended & Verified Working)
+                              </span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                                100% Reliable
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-600">
+                              Run this command in any PowerShell or Terminal window:
+                            </p>
+                            <div className="flex items-center justify-between bg-slate-900 text-rose-200 px-3 py-2 rounded-xl font-mono text-xs shadow-inner">
+                              <span>npx ngrok http 11434 --host-header="localhost"</span>
+                              <button
+                                onClick={() => handleCopy("cmd_ngrok", "npx ngrok http 11434 --host-header=\"localhost\"")}
+                                className="p-1 hover:text-white transition-colors"
+                                title="Copy command"
+                              >
+                                {copiedText === "cmd_ngrok" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                            <p className="text-[10px] text-slate-600 leading-relaxed">
+                              ✨ <strong>Why this works:</strong> The <code>--host-header="localhost"</code> flag rewrites the incoming web header so Ollama sees it as local traffic and allows it without 403 Forbidden!
+                              <br />
+                              Outputs an HTTPS URL like: <code>https://xxxx.ngrok-free.app</code>. Copy that into AI Settings!
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Step 3 */}
@@ -280,8 +330,8 @@ export default function AppGuideModal({ isOpen, onClose, onOpenAiSettings }) {
                         <span className="font-semibold text-slate-700 block mb-1">
                           Step 3: Paste the URL in AI Settings
                         </span>
-                        <p className="text-slate-600">
-                          In the website, click <strong>"Ask Gemma AI"</strong> → <strong>"⚙️ AI Settings"</strong> → Replace the host with your <code>https://xxxx.loca.lt</code> URL → Click <strong>Save</strong>!
+                        <p className="text-slate-600 text-xs">
+                          In the website, click <strong>"Ask Gemma AI"</strong> → <strong>"⚙️ AI Settings"</strong> → Paste your <code>https://xxxx.lhr.life</code> or <code>https://xxxx.ngrok-free.app</code> URL → Click <strong>Save</strong>!
                         </p>
                       </div>
                     </div>
@@ -300,6 +350,11 @@ export default function AppGuideModal({ isOpen, onClose, onOpenAiSettings }) {
                     <strong>Q: Is this free to use?</strong>
                     <br />
                     Yes! Both Ollama (runs locally on your PC) and Google AI Studio (free API key tier) are 100% free of charge.
+                  </p>
+                  <p>
+                    <strong>Q: Why did I get a "403 Forbidden" error when testing my tunnel?</strong>
+                    <br />
+                    The 403 Forbidden error is caused by Ollama's internal CORS/Host security filter. By default, Ollama refuses to respond to any external domain name (like <code>wet-spoons-trade.loca.lt</code>) unless the environment variable <code>OLLAMA_ORIGINS="*"</code> is set on your computer. Set the variable using the command in Step 2, restart Ollama, and test again.
                   </p>
                   <p>
                     <strong>Q: Is my medical & pregnancy data safe?</strong>

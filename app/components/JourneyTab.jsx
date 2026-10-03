@@ -59,7 +59,7 @@ export default function JourneyTab({
   return (
     <div className="space-y-6 animate-fadeIn pb-12">
       {/* Hero: Current Week & Baby Size Spotlight */}
-      <div className="glass-card-elevated rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+      <div className="glass-card-elevated rounded-3xl p-5 sm:p-8 relative overflow-hidden">
         {/* Ambient background blur elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-rose-200/40 via-pink-100/20 to-transparent rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-amber-100/40 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -118,10 +118,10 @@ export default function JourneyTab({
             </div>
 
             {/* Quick Celebrate Button */}
-            <div className="pt-2 flex items-center gap-3">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
               <button
                 onClick={handleCelebrate}
-                className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-rose-200 transition-all flex items-center gap-2 hover:scale-[1.02]"
+                className="py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-rose-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Celebrate Today</span>
@@ -129,7 +129,7 @@ export default function JourneyTab({
 
               <button
                 onClick={() => onNavigateToTab("weekguide")}
-                className="px-4 py-2.5 rounded-2xl bg-white/80 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-semibold text-xs sm:text-sm border border-rose-100 transition-all flex items-center gap-1.5"
+                className="py-3 px-4 rounded-2xl bg-white/90 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-semibold text-xs sm:text-sm border border-rose-100 transition-all flex items-center justify-center gap-1.5 active:scale-95"
               >
                 <span>Read Full Week Guide</span>
                 <ArrowRight className="w-4 h-4" />
@@ -145,7 +145,7 @@ export default function JourneyTab({
               </div>
 
               {/* Fruit Emoji Icon with Glowing Aura */}
-              <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto my-2 rounded-full bg-gradient-to-tr from-rose-100 via-pink-50 to-amber-100 flex items-center justify-center text-5xl sm:text-6xl shadow-md border-4 border-white transition-transform group-hover:scale-105">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto my-2 rounded-full bg-gradient-to-tr from-rose-100 via-pink-50 to-amber-100 flex items-center justify-center text-5xl sm:text-6xl shadow-md border-4 border-white transition-transform group-hover:scale-105 animate-float">
                 {week?.emoji || "👶"}
               </div>
 

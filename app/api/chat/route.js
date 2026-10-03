@@ -167,7 +167,12 @@ export async function POST(req) {
 
     const ollamaResponse = await fetch(`${targetHost}/api/generate`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "bypass-tunnel-reminder": "true",
+        "ngrok-skip-browser-warning": "true",
+        "User-Agent": "Mozilla/5.0"
+      },
       body: JSON.stringify({
         model: modelName,
         prompt: prompt,
@@ -267,9 +272,28 @@ export async function GET(req) {
   const targetHost = hostParam.replace(/\/+$/, "");
 
   try {
-    const res = await fetch(`${targetHost}/api/tags`, { method: "GET" });
+    const res = await fetch(`${targetHost}/api/tags`, {
+      method: "GET",
+      headers: {
+        "bypass-tunnel-reminder": "true",
+        "ngrok-skip-browser-warning": "true",
+        "User-Agent": "Mozilla/5.0"
+      },
+      signal: AbortSignal.timeout(6000)
+    });
+
     if (!res.ok) {
-      return NextResponse.json({ status: "offline", error: "Ollama returned error", host: targetHost }, { status: 503 });
+      const is403 = res.status === 403;
+      return NextResponse.json({
+        status: "offline",
+        host: targetHost,
+        error: is403
+          ? "403 Forbidden (Ollama blocked host)"
+          : `Ollama returned error (${res.status})`,
+        tip: is403
+          ? "The 403 Forbidden error is caused by Ollama's internal CORS/Host security filter. By default, Ollama refuses to respond to any external domain name unless the environment variable OLLAMA_ORIGINS='*' is set on your computer. Set the variable and restart Ollama."
+          : undefined
+      }, { status: 503 });
     }
     const data = await res.json();
     const hasPregnancyGemma = data.models?.some((m) => m.name.includes("pregnancy-gemma"));
@@ -284,7 +308,7 @@ export async function GET(req) {
       status: "offline",
       host: targetHost,
       error: `Could not connect to ${targetHost}`,
-      tip: "Make sure Ollama is running or check the URL."
+      tip: "Make sure Ollama and your tunnel are running."
     }, { status: 503 });
   }
 }

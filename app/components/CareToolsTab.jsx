@@ -173,7 +173,7 @@ export default function CareToolsTab() {
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
       {/* Tool Navigation Pill Header */}
-      <div className="glass-card-elevated rounded-3xl p-4 sm:p-5 border border-rose-100 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+      <div className="glass-card-elevated rounded-3xl p-2 sm:p-4 border border-rose-100 flex items-center justify-between gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0">
         {[
           { id: "kicks", label: "Kick Counter", icon: Baby },
           { id: "contractions", label: "Contraction Timer", icon: Timer },
@@ -186,13 +186,13 @@ export default function CareToolsTab() {
             <button
               key={tool.id}
               onClick={() => setActiveTool(tool.id)}
-              className={`flex-1 min-w-[140px] py-2.5 px-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 min-w-[115px] sm:min-w-[140px] py-2.5 px-2.5 sm:px-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 active:scale-95 whitespace-nowrap ${
                 isActive
                   ? "bg-rose-500 text-white shadow-md shadow-rose-200"
                   : "bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600"
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4 shrink-0" />
               <span>{tool.label}</span>
             </button>
           );
@@ -299,23 +299,23 @@ export default function CareToolsTab() {
               {formatTimer(contractionSeconds)}
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center w-full">
               <button
                 onClick={handleToggleContraction}
-                className={`py-4 px-10 rounded-3xl text-white font-bold text-base sm:text-lg shadow-lg transition-all flex items-center gap-3 cursor-pointer ${
+                className={`w-full sm:w-auto py-3.5 sm:py-4 px-6 sm:px-10 rounded-3xl text-white font-bold text-sm sm:text-lg shadow-lg transition-all flex items-center justify-center gap-2.5 sm:gap-3 cursor-pointer active:scale-95 ${
                   isContractionRunning
-                    ? "bg-red-500 hover:bg-red-600 shadow-red-200 scale-105"
-                    : "bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 shadow-rose-200 hover:scale-105"
+                    ? "bg-red-500 hover:bg-red-600 shadow-red-200"
+                    : "bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 shadow-rose-200"
                 }`}
               >
                 {isContractionRunning ? (
                   <>
-                    <Square className="w-5 h-5 fill-current" />
+                    <Square className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                     <span>Contraction Finished (Stop)</span>
                   </>
                 ) : (
                   <>
-                    <Play className="w-5 h-5 fill-current" />
+                    <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                     <span>Contraction Started (Start)</span>
                   </>
                 )}
@@ -401,10 +401,10 @@ export default function CareToolsTab() {
                   className="flex items-center gap-3 cursor-pointer flex-1 min-w-0"
                 >
                   <div
-                    className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${
+                    className={`w-6 h-6 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
                       q.checked
-                        ? "bg-emerald-500 border-emerald-500 text-white"
-                        : "border-slate-300"
+                        ? "bg-emerald-500 border-emerald-500 text-white shadow-xs"
+                        : "border-slate-300 hover:border-rose-400 bg-white"
                     }`}
                   >
                     {q.checked && <CheckCircle2 className="w-4 h-4" />}
@@ -420,7 +420,7 @@ export default function CareToolsTab() {
 
                 <button
                   onClick={() => handleDeleteQuestion(q.id)}
-                  className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                  className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                   title="Delete question"
                 >
                   <Trash2 className="w-4 h-4" />

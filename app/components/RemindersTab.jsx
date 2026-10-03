@@ -153,17 +153,17 @@ export default function RemindersTab({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <button
               onClick={handleTestWaterReminder}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-bold border border-sky-200 transition-colors"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-bold border border-sky-200 transition-colors"
             >
               <Volume2 className="w-3.5 h-3.5" />
-              <span>Test Water Chime</span>
+              <span>Test Chime</span>
             </button>
             <button
               onClick={onResetWater}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold transition-colors"
+              className="flex items-center justify-center gap-1 px-3 py-2 sm:py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-semibold transition-colors"
               title="Reset today's water counter"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -178,10 +178,10 @@ export default function RemindersTab({
           <div className="md:col-span-6 space-y-4">
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="text-4xl font-black text-slate-800 tracking-tight">
+                <span className="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight">
                   {waterData.currentMl}
                 </span>
-                <span className="text-sm font-semibold text-slate-400 ml-1.5">
+                <span className="text-xs sm:text-sm font-semibold text-slate-400 ml-1.5">
                   / {waterData.dailyTargetMl} ml
                 </span>
               </div>
@@ -210,7 +210,7 @@ export default function RemindersTab({
                   playWaterPop();
                   onAddWater(250);
                 }}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-200 transition-all flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-200 transition-all flex items-center justify-center gap-1.5 active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>+1 Glass (250 ml)</span>
@@ -221,7 +221,7 @@ export default function RemindersTab({
                   playWaterPop();
                   onAddWater(500);
                 }}
-                className="py-2.5 px-3 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold text-xs transition-colors flex items-center gap-1"
+                className="py-3 px-3.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold text-xs transition-colors flex items-center gap-1 active:scale-95"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>+500 ml Bottle</span>
@@ -232,7 +232,7 @@ export default function RemindersTab({
                   if (waterData.currentMl > 0) onAddWater(-250);
                 }}
                 disabled={waterData.currentMl <= 0}
-                className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-600 text-xs font-semibold transition-colors"
+                className="py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-600 text-xs font-semibold transition-colors active:scale-95"
                 title="Undo last glass"
               >
                 Undo
@@ -241,11 +241,11 @@ export default function RemindersTab({
           </div>
 
           {/* Right: Glass Visual Grid */}
-          <div className="md:col-span-6 bg-sky-50/60 p-4 rounded-2xl border border-sky-100">
+          <div className="md:col-span-6 bg-sky-50/60 p-3 sm:p-4 rounded-2xl border border-sky-100">
             <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block mb-2">
               Today's Glasses (Tap to toggle)
             </span>
-            <div className="grid grid-cols-5 sm:grid-cols-5 gap-2.5">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2.5">
               {Array.from({ length: totalGlasses }).map((_, index) => {
                 const isFilled = index < currentGlasses;
                 return (
@@ -259,15 +259,15 @@ export default function RemindersTab({
                         onAddWater(250);
                       }
                     }}
-                    className={`h-16 rounded-xl border flex flex-col items-center justify-center p-1 transition-all ${
+                    className={`h-14 sm:h-16 rounded-xl border flex flex-col items-center justify-center p-1 transition-all active:scale-95 ${
                       isFilled
                         ? "bg-gradient-to-b from-sky-300 via-sky-400 to-blue-500 border-sky-400 text-white shadow-sm scale-100"
                         : "bg-white/80 border-sky-200/80 text-sky-300 hover:border-sky-300 hover:bg-sky-50/50"
                     }`}
                     title={`Glass #${index + 1} (250 ml)`}
                   >
-                    <Droplets className={`w-5 h-5 ${isFilled ? "animate-pulse" : "opacity-40"}`} />
-                    <span className="text-[10px] font-bold mt-1">
+                    <Droplets className={`w-4 h-4 sm:w-5 sm:h-5 ${isFilled ? "animate-pulse" : "opacity-40"}`} />
+                    <span className="text-[9px] sm:text-[10px] font-bold mt-1">
                       {isFilled ? "250ml" : `#${index + 1}`}
                     </span>
                   </button>
@@ -419,14 +419,14 @@ export default function RemindersTab({
                         playChime();
                         onToggleMedTaken(med.id);
                       }}
-                      className={`w-7 h-7 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                      className={`w-9 h-9 sm:w-8 sm:h-8 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 transition-all active:scale-95 ${
                         isTaken
                           ? "bg-emerald-500 border-emerald-500 text-white shadow-sm"
                           : "border-slate-300 hover:border-rose-400 bg-white"
                       }`}
                       title={isTaken ? "Marked as taken (Click to undo)" : "Click to mark as taken"}
                     >
-                      {isTaken && <Check className="w-4 h-4 stroke-[3]" />}
+                      {isTaken ? <Check className="w-5 h-5 sm:w-4 sm:h-4 stroke-[3]" /> : <span className="w-2.5 h-2.5 rounded-full bg-slate-200" />}
                     </button>
 
                     <div className="space-y-1 flex-1 min-w-0">
@@ -462,9 +462,9 @@ export default function RemindersTab({
                   </div>
 
                   {/* Right: CUSTOM TIME PICKER & ACTIONS */}
-                  <div className="flex items-center gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 self-end sm:self-center">
+                  <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
                     {/* Time Input allowing user to change timing on the fly */}
-                    <div className="flex items-center gap-1.5 bg-rose-50/80 px-2.5 py-1.5 rounded-xl border border-rose-100">
+                    <div className="flex items-center gap-1.5 bg-rose-50/80 px-2.5 py-1.5 rounded-xl border border-rose-100 flex-1 sm:flex-initial">
                       <Clock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                       <div className="text-left">
                         <span className="text-[9px] uppercase font-bold text-slate-400 block -mb-0.5">
@@ -480,23 +480,25 @@ export default function RemindersTab({
                       </div>
                     </div>
 
-                    {/* Test alert chime */}
-                    <button
-                      onClick={() => handleTestMedReminder(med)}
-                      className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                      title="Test reminder chime & alert"
-                    >
-                      <Bell className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      {/* Test alert chime */}
+                      <button
+                        onClick={() => handleTestMedReminder(med)}
+                        className="p-2.5 sm:p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        title="Test reminder chime & alert"
+                      >
+                        <Bell className="w-4 h-4" />
+                      </button>
 
-                    {/* Delete medication */}
-                    <button
-                      onClick={() => onDeleteMedication(med.id)}
-                      className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                      title="Delete medicine"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                      {/* Delete medication */}
+                      <button
+                        onClick={() => onDeleteMedication(med.id)}
+                        className="p-2.5 sm:p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        title="Delete medicine"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -543,8 +545,8 @@ export default function RemindersTab({
 
       {/* MODAL: ADD CUSTOM MEDICATION */}
       {showAddMedModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-md glass-card-elevated rounded-3xl p-6 sm:p-7 shadow-2xl border border-rose-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn overflow-y-auto">
+          <div className="w-full max-w-md glass-card-elevated rounded-3xl p-5 sm:p-7 shadow-2xl border border-rose-100 max-h-[90dvh] overflow-y-auto my-auto">
             <h3 className="text-xl font-bold text-slate-800 mb-1">Add Medication or Vitamin</h3>
             <p className="text-xs text-slate-500 mb-4">
               Add any prescription medicine, prenatal supplement, or vitamin with custom timing.

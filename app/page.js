@@ -10,6 +10,7 @@ import GemmaChatTab from "./components/GemmaChatTab";
 import OnboardingModal from "./components/OnboardingModal";
 import SettingsModal from "./components/SettingsModal";
 import AppGuideModal from "./components/AppGuideModal";
+import MobileBottomNav from "./components/MobileBottomNav";
 import ToastAlert from "./components/ToastAlert";
 import { 
   DEFAULT_MEDICATIONS, 
@@ -377,8 +378,8 @@ export default function Home() {
         onRequestNotification={handleRequestNotification}
       />
 
-      {/* Main Body Content */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 pt-6 pb-20">
+      {/* Main Body Content with mobile bottom nav safe padding */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 pt-3 sm:pt-6 pb-28 md:pb-16">
         {activeTab === "journey" && (
           <JourneyTab
             stats={effectiveStats}
@@ -422,6 +423,9 @@ export default function Home() {
 
         {activeTab === "caretools" && <CareToolsTab />}
       </main>
+
+      {/* App-Grade Mobile Bottom Navigation Bar (Hidden on Desktop) */}
+      <MobileBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Onboarding Modal */}
       <OnboardingModal

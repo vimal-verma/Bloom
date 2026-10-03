@@ -57,8 +57,8 @@ export default function OnboardingModal({ isOpen, onClose, onSave, initialData }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-lg glass-card-elevated rounded-3xl p-6 sm:p-8 shadow-2xl border border-rose-100 relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="w-full max-w-lg glass-card-elevated rounded-3xl p-5 sm:p-8 shadow-2xl border border-rose-100 relative overflow-hidden max-h-[92dvh] overflow-y-auto my-auto">
         {/* Soft background glow */}
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-rose-200/40 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-amber-100/50 rounded-full blur-3xl pointer-events-none" />

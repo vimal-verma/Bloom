@@ -101,11 +101,15 @@ How are you feeling today? You can ask me anything about your current week's sym
         setTestResult({ success: true, message: `Connected to ${data.host}` });
       } else {
         setConnectionStatus("offline");
-        setTestResult({ success: false, message: data.error || "Cannot reach host" });
+        setTestResult({
+          success: false,
+          message: data.error || "Cannot reach host",
+          tip: data.tip
+        });
       }
     } catch (err) {
       setConnectionStatus("offline");
-      setTestResult({ success: false, message: "Could not reach endpoint" });
+      setTestResult({ success: false, message: "Could not reach endpoint", tip: "Check if your tunnel is running." });
     }
   };
 
@@ -338,9 +342,9 @@ How are you feeling today? You can ask me anything about your current week's sym
       </div>
 
       {/* Chat Messages Container */}
-      <div className="glass-card-elevated rounded-3xl p-4 sm:p-6 border border-rose-100 min-h-[460px] max-h-[580px] flex flex-col justify-between overflow-hidden">
+      <div className="glass-card-elevated rounded-3xl p-3.5 sm:p-6 border border-rose-100 h-[65dvh] sm:h-[600px] min-h-[420px] flex flex-col justify-between overflow-hidden shadow-sm">
         {/* Scrollable message stream */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1 mb-4">
+        <div className="flex-1 overflow-y-auto space-y-3.5 sm:space-y-4 pr-1 mb-3">
           {/* Quick Setup Card if Not Connected */}
           {connectionStatus !== "online" && (
             <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 text-slate-800 space-y-2 mb-2 shadow-xs animate-fadeIn">
@@ -452,16 +456,16 @@ How are you feeling today? You can ask me anything about your current week's sym
 
         {/* Suggested Quick Prompts */}
         <div className="pt-2 border-t border-rose-100/70">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
             Suggested Questions:
           </span>
-          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth overscroll-x-contain -mx-1 px-1">
             {suggestedPrompts.map((prompt, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(prompt)}
                 disabled={isLoading}
-                className="px-3 py-1.5 rounded-xl bg-rose-50/80 hover:bg-rose-100 border border-rose-100/70 text-rose-700 text-xs font-semibold whitespace-nowrap transition-colors disabled:opacity-50 shrink-0"
+                className="px-3 py-1.5 rounded-xl bg-rose-50/80 hover:bg-rose-100 border border-rose-100/70 text-rose-700 text-xs font-semibold whitespace-nowrap transition-colors disabled:opacity-50 shrink-0 active:scale-95"
               >
                 {prompt}
               </button>
@@ -474,22 +478,22 @@ How are you feeling today? You can ask me anything about your current week's sym
               e.preventDefault();
               handleSend();
             }}
-            className="flex items-center gap-2 pt-2"
+            className="flex items-center gap-2 pt-1.5"
           >
             <input
               type="text"
-              placeholder={`Ask Pregnancy Gemma anything about Week ${stats?.currentWeek || 1}...`}
+              placeholder={`Ask Gemma about Week ${stats?.currentWeek || 1}...`}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isLoading}
-              className="flex-1 px-4 py-3 rounded-2xl border border-rose-200/90 bg-white/95 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 placeholder:text-slate-400"
+              className="flex-1 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-rose-200/90 bg-white/95 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400 placeholder:text-slate-400"
             />
 
             {isLoading ? (
               <button
                 type="button"
                 onClick={handleStop}
-                className="px-4 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition-all whitespace-nowrap"
+                className="px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm shadow-md transition-all whitespace-nowrap active:scale-95"
               >
                 Stop
               </button>
@@ -497,23 +501,23 @@ How are you feeling today? You can ask me anything about your current week's sym
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
-                className="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 disabled:opacity-40 text-white font-bold text-xs sm:text-sm shadow-md shadow-rose-200 transition-all flex items-center gap-1.5"
+                className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 disabled:opacity-40 text-white font-bold text-xs sm:text-sm shadow-md shadow-rose-200 transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
               >
-                <span>Ask</span>
+                <span className="hidden sm:inline">Ask</span>
                 <Send className="w-4 h-4" />
               </button>
             )}
           </form>
 
           {/* Safety Disclaimer Footer */}
-          <div className="flex items-center justify-between text-[10px] text-slate-400 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[10px] text-slate-400 pt-2 gap-1">
             <span className="flex items-center gap-1">
               <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              For educational guidance only. Always consult your doctor or midwife for medical emergencies.
+              For educational guidance only. Always consult your doctor for medical emergencies.
             </span>
             <button
               onClick={() => setShowConfigModal(true)}
-              className="hover:text-rose-600 hover:underline font-mono text-[11px]"
+              className="hover:text-rose-600 hover:underline font-mono text-[10px] sm:text-[11px] self-start sm:self-auto"
             >
               ⚙️ {aiConfig.provider === "gemini" ? "Google Gemini API" : `Ollama: ${aiConfig.ollamaModel}`}
             </button>
@@ -523,8 +527,8 @@ How are you feeling today? You can ask me anything about your current week's sym
 
       {/* MODAL: AI CONNECTION SETTINGS (OLLAMA HOST URL / CLOUD API KEY) */}
       {showConfigModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-lg glass-card-elevated rounded-3xl p-6 sm:p-7 shadow-2xl border border-rose-100 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn overflow-y-auto">
+          <div className="w-full max-w-lg glass-card-elevated rounded-3xl p-5 sm:p-7 shadow-2xl border border-rose-100 relative max-h-[90dvh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between pb-3 border-b border-rose-100">
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
@@ -612,6 +616,14 @@ How are you feeling today? You can ask me anything about your current week's sym
                     <br />
                     • <strong>Deployed on Render</strong>: Use your public tunnel (e.g. <code>https://xxxx.ngrok-free.app</code>) or remote server URL.
                   </p>
+                  <div className="mt-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-[11px] text-amber-800 space-y-1">
+                    <span className="font-bold flex items-center gap-1 text-amber-900">
+                      💡 Recommended Tunnel Command:
+                    </span>
+                    <p className="leading-relaxed">
+                      Run <code>npx ngrok http 11434 --host-header="localhost"</code>. The <code>--host-header="localhost"</code> flag rewrites the header at the HTTP layer, bypassing Ollama's 403 Forbidden check instantly!
+                    </p>
+                  </div>
                 </div>
 
                 <div>
@@ -648,24 +660,37 @@ How are you feeling today? You can ask me anything about your current week's sym
                 </div>
 
                 {/* Test Connection Button */}
-                <div className="flex items-center gap-3 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => checkHealth(aiConfig.ollamaHost)}
-                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5"
-                  >
-                    <Server className="w-3.5 h-3.5" />
-                    <span>Test Ollama Host</span>
-                  </button>
-
-                  {testResult && (
-                    <span
-                      className={`text-xs font-semibold flex items-center gap-1 ${
-                        testResult.success ? "text-emerald-600" : "text-red-500"
-                      }`}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => checkHealth(aiConfig.ollamaHost)}
+                      className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5 active:scale-95"
                     >
-                      {testResult.success ? "✓" : "✗"} {testResult.message}
-                    </span>
+                      <Server className="w-3.5 h-3.5" />
+                      <span>Test Ollama Host</span>
+                    </button>
+
+                    {testResult && (
+                      <span
+                        className={`text-xs font-semibold flex items-center gap-1 ${
+                          testResult.success ? "text-emerald-600" : "text-red-500 font-bold"
+                        }`}
+                      >
+                        {testResult.success ? "✓" : "✗"} {testResult.message}
+                      </span>
+                    )}
+                  </div>
+
+                  {testResult && !testResult.success && testResult.tip && (
+                    <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 space-y-1">
+                      <span className="font-bold flex items-center gap-1 text-[11px] text-amber-900">
+                        💡 Fix for this error:
+                      </span>
+                      <p className="text-[11px] leading-relaxed">
+                        {testResult.tip}
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>

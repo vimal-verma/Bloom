@@ -7,9 +7,20 @@
   --accent-sage: #10b981;
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
 body {
-  background: radial-gradient(circle at 10% 20%, #fff6f6 0%, #fdf4f5 50%, #fbf9fe 100%);
+  background: radial-gradient(circle at 10% 20%, #fff7f7 0%, #fdf2f4 45%, #fbf8fe 100%);
   min-height: 100vh;
+  min-height: 100dvh;
   color: #1e293b;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
@@ -17,24 +28,39 @@ body {
 
 /* Glassmorphism Card Utilities */
 .glass-card {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 30px -8px rgba(244, 63, 94, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(254, 226, 226, 0.65);
+  box-shadow: 0 10px 30px -8px rgba(244, 63, 94, 0.07), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
 }
 
 .glass-card-elevated {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(254, 205, 211, 0.45);
-  box-shadow: 0 20px 40px -12px rgba(244, 63, 94, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(254, 205, 211, 0.55);
+  box-shadow: 0 20px 45px -12px rgba(244, 63, 94, 0.12), 0 8px 18px -4px rgba(0, 0, 0, 0.03);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(254, 226, 226, 0.6);
+}
+
+/* Floating animation for baby avatar */
+@keyframes softFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: softFloat 4s ease-in-out infinite;
 }
 
 /* Water Wave Animation */
@@ -68,18 +94,42 @@ body {
   animation: softPulse 2.5s infinite;
 }
 
-/* Smooth custom scrollbar */
+/* Mobile Safe Areas */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0.5rem);
+}
+
+/* Prevent iOS Zoom on Inputs */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Smooth custom scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #fdf2f2;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #fca5a5;
+  background: rgba(244, 63, 94, 0.25);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #f87171;
+  background: rgba(244, 63, 94, 0.5);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

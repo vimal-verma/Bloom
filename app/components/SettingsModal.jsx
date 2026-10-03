@@ -51,8 +51,8 @@ export default function SettingsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-md glass-card-elevated rounded-3xl p-6 sm:p-7 shadow-2xl border border-rose-100 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="w-full max-w-md glass-card-elevated rounded-3xl p-5 sm:p-7 shadow-2xl border border-rose-100 relative max-h-[92dvh] overflow-y-auto my-auto">
         <div className="flex items-center justify-between pb-3 border-b border-rose-100">
           <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-rose-500" />
